@@ -14,6 +14,7 @@ import static com.cburch.logisim.analyze.Strings.S;
 import com.cburch.logisim.analyze.data.Range;
 import com.cburch.logisim.analyze.model.Var.Bit;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -91,7 +92,7 @@ public abstract class Expression {
               }
             });
   }
-
+  
   public boolean evaluate(final Assignments assignments) {
     int ret =
         visit(
@@ -149,8 +150,8 @@ public abstract class Expression {
 
     public final int id;
 
-    protected final int[] opLvl;
-    protected final String[] opSym;
+    public final int[] opLvl;
+    public final String[] opSym;
 
     // Notes on precedence:
     // all forms of NOT are the highest precedence level
@@ -659,7 +660,7 @@ public abstract class Expression {
            ? (eq.exprA instanceof Expressions.Variable) ? eq.exprA.toString() : null
            : null;
   }
-
+  
   public static Expression getAssignmentExpression(Expression expr) {
     return (expr instanceof Expressions.Eq eq)
            ? (eq.exprA instanceof Expressions.Variable) ? eq.exprB : null

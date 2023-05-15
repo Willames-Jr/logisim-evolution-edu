@@ -40,9 +40,9 @@ public class Expressions {
     }
   }
 
-  private abstract static class Binary extends Expression {
-    protected final Expression exprA;
-    protected final Expression exprB;
+  public abstract static class Binary extends Expression {
+    public final Expression exprA;
+    public final Expression exprB;
 
     Binary(Expression a, Expression b) {
       this.exprA = a;
@@ -63,7 +63,7 @@ public class Expressions {
     }
   }
 
-  private static class Constant extends Expression {
+  public static class Constant extends Expression {
     private final int value;
 
     Constant(int value) {
@@ -103,7 +103,7 @@ public class Expressions {
     }
   }
 
-  private static class Not extends Expression {
+  public static class Not extends Expression {
     private final Expression expr;
 
     Not(Expression a) {
@@ -286,7 +286,7 @@ public class Expressions {
       return visitor.visitEq(exprA, exprB);
     }
   }
-
+  
   public static Expression and(Expression a, Expression b) {
     if (a == null) return b;
     if (b == null) return a;

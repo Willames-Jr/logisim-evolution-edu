@@ -215,6 +215,7 @@ class MinimizedTab extends AnalyzerTab {
     public void actionPerformed(ActionEvent event) {
       final var output = getCurrentVariable();
       final var format = outputExprs.getMinimizedFormat(output);
+      
       formatChoice.setSelectedIndex(FormatModel.getFormatIndex(format));
       outputExprs.setExpression(output, outputExprs.getMinimalExpression(output));
     }
@@ -317,6 +318,7 @@ class MinimizedTab extends AnalyzerTab {
     add(buttons);
 
     final var selected = selector.getSelectedOutput();
+    
     setAsExpr.setEnabled(selected != null && !outputExprs.isExpressionMinimal(selected));
     setTransferHandler(new MinimizedTransferHandler());
     karnaughMap.setTransferHandler(new KmapTransferHandler());

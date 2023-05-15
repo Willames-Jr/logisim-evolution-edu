@@ -236,7 +236,6 @@ public class OutputExpressions {
     void setExpression(Expression newExpr, String newExprString) {
       expr = newExpr;
       exprString = newExprString;
-
       if (expr != minimalExpr) { // for efficiency to avoid recomputation
         final var values = computeColumn(model.getTruthTable(), expr);
         final var outputColumn = model.getOutputs().bits.indexOf(output);
@@ -452,7 +451,8 @@ public class OutputExpressions {
 
   public void setExpression(String output, Expression expr, String exprString) {
     if (output == null) return;
-    getOutputData(output, true).setExpression(expr, exprString);
+    OutputData t = getOutputData(output, true);
+    t.setExpression(expr, exprString);
   }
 
   public void setMinimizedFormat(String output, int format) {

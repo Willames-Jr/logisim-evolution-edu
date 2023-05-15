@@ -73,10 +73,12 @@ public class Analyzer extends LFrame.SubWindow {
       tabbedPane.setTitleAt(IO_TAB, S.get("inputsOutputsTab"));
       tabbedPane.setTitleAt(TABLE_TAB, S.get("tableTab"));
       tabbedPane.setTitleAt(EXPRESSION_TAB, S.get("expressionTab"));
+      tabbedPane.setTitleAt(ALGEBRA_TAB, S.get("algebraTab"));
       tabbedPane.setTitleAt(MINIMIZED_TAB, S.get("minimizedTab"));
       tabbedPane.setToolTipTextAt(IO_TAB, S.get("inputsOutputsTabTip"));
       tabbedPane.setToolTipTextAt(TABLE_TAB, S.get("tableTabTip"));
       tabbedPane.setToolTipTextAt(EXPRESSION_TAB, S.get("expressionTabTip"));
+      tabbedPane.setToolTipTextAt(EXPRESSION_TAB, S.get("algebraTabTip"));
       tabbedPane.setToolTipTextAt(MINIMIZED_TAB, S.get("minimizedTabTip"));
       importTable.setText(S.get("importTableButton"));
       buildCircuit.setText(S.get("buildCircuitButton"));
@@ -87,6 +89,7 @@ public class Analyzer extends LFrame.SubWindow {
       ioPanel.localeChanged();
       truthTablePanel.localeChanged();
       expressionPanel.localeChanged();
+      algebraPanel.localeChanged();
       minimizedPanel.localeChanged();
       importTable.localeChanged();
       buildCircuit.localeChanged();
@@ -127,6 +130,8 @@ public class Analyzer extends LFrame.SubWindow {
       tabbedPane.setEnabledAt(TABLE_TAB, hasInputsAndOutputs);
       tabbedPane.setEnabledAt(EXPRESSION_TAB, hasInputsAndOutputs
               && (nrOfInputs <= Implicant.MAXIMAL_NR_OF_INPUTS_FOR_AUTO_MINIMAL_FORM));
+      tabbedPane.setEnabledAt(ALGEBRA_TAB, hasInputsAndOutputs
+              && (nrOfInputs <= Implicant.MAXIMAL_NR_OF_INPUTS_FOR_AUTO_MINIMAL_FORM));
       tabbedPane.setEnabledAt(MINIMIZED_TAB, hasInputsAndOutputs
               && (nrOfInputs <= Implicant.MAXIMAL_NR_OF_INPUTS_FOR_AUTO_MINIMAL_FORM));
       ioPanel.updateTab();
@@ -165,8 +170,9 @@ public class Analyzer extends LFrame.SubWindow {
   // used by circuit analysis to select the relevant tab automatically.
   public static final int IO_TAB = 0;
   public static final int TABLE_TAB = 1;
-  public static final int EXPRESSION_TAB = 2;
+  public static final int EXPRESSION_TAB = 2; 
   public static final int MINIMIZED_TAB = 3;
+  public static final int ALGEBRA_TAB = 4;
 
   private final AnalyzerModel model = new AnalyzerModel();
 
@@ -174,6 +180,7 @@ public class Analyzer extends LFrame.SubWindow {
   private final VariableTab ioPanel;
   private final TableTab truthTablePanel;
   private final ExpressionTab expressionPanel;
+  private final AlgebraTab algebraPanel;
   private final MinimizedTab minimizedPanel;
 
   private final BuildCircuitButton buildCircuit;
@@ -191,6 +198,7 @@ public class Analyzer extends LFrame.SubWindow {
     ioPanel = new VariableTab(model.getInputs(), model.getOutputs(), menubar);
     truthTablePanel = new TableTab(model.getTruthTable());
     expressionPanel = new ExpressionTab(model, menubar);
+    algebraPanel = new AlgebraTab(model, menubar);
     minimizedPanel = new MinimizedTab(model, menubar);
     importTable = new ImportTableButton(this, model);
     buildCircuit = new BuildCircuitButton(this, model);
@@ -209,8 +217,10 @@ public class Analyzer extends LFrame.SubWindow {
     addTab(TABLE_TAB, truthTablePanel);
     addTab(EXPRESSION_TAB, expressionPanel);
     addTab(MINIMIZED_TAB, minimizedPanel);
+    addTab(ALGEBRA_TAB, algebraPanel);
     tabbedPane.setEnabledAt(MINIMIZED_TAB, false);
     tabbedPane.setEnabledAt(EXPRESSION_TAB, false);
+    tabbedPane.setEnabledAt(ALGEBRA_TAB, false);
     tabbedPane.setEnabledAt(TABLE_TAB, false);
 
     final var contents = getContentPane();
