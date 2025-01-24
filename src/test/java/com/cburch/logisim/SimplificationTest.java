@@ -26,7 +26,7 @@ public class SimplificationTest {
 	@BeforeEach
 	public void setup() {
 		// Creating input variables a,b,c and d
-		// Output is always x
+		// Output is always   x
 		
 		Var a = new Var("a",1);
 		Var b = new Var("b",1);
@@ -174,7 +174,6 @@ public class SimplificationTest {
 			fail();
 		}
 	}
-
 
 
 	/*
@@ -348,6 +347,7 @@ public class SimplificationTest {
 			fail();
 		}
 	}
+
 	/*
 		a.d.(a+b) => a.d
 		a+d+(a.b) => a+d
@@ -413,6 +413,7 @@ public class SimplificationTest {
 			fail();
 		}
 	}
+
 	/*
 		~(a.b) => ~a + ~b
 		~(a+b) => ~a . ~b

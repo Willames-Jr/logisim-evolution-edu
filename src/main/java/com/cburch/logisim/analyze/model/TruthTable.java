@@ -166,9 +166,9 @@ public class TruthTable {
     model.getOutputs().addVariableListListener(myListener);
   }
 
-	@Override
-	public boolean equals(Object obj) {
-//		TODO: select output to compare
+  @Override
+  public boolean equals(Object obj) {
+
 		if (obj == null) {
 			return false;
 		}

@@ -10,7 +10,7 @@ public class AlgebraSimplifier {
 	public enum Law {
 		IDENTITY,
 		NULL,
-		IDEMPOTENT, 
+		IDEMPOTENT,
 		INVERSE,
 		COMMUTATIVE,
 		ASSOCIATIVE,
@@ -24,8 +24,8 @@ public class AlgebraSimplifier {
 	}
 
 	public record SimplificationStep(Expression newExpression, Expression oldExpression, Law law) {}
-	
-	// A ideia é que essa classe represente 
+
+	// A ideia é que essa classe represente
 	// a expressão como um nó de uma árvore
 	// Talvez o "model" poderia ficar fora
 	// Mas não vejo onde colocar
@@ -39,7 +39,7 @@ public class AlgebraSimplifier {
 			this.value = value;
 			this.model = model;
 		}
-		
+
 		@Override
 		public boolean equals(Object ob) {
 			if (!(ob instanceof ExpressionNode expressionNodeObj)) {
@@ -49,7 +49,7 @@ public class AlgebraSimplifier {
             return (expressionNodeObj.key == this.key)
                     && (compareExpressions(expressionNodeObj.value, this.value, this.model));
         }
-		
+
 		@Override
 		public int hashCode() {
 			return Objects.hash(this.key, this.value, this.model);
@@ -75,7 +75,7 @@ public class AlgebraSimplifier {
 	public static SimplificationStep simplifyExpression(Expression expr, AnalyzerModel model, Law lawToApply) {
 
 		simplified = false;
-		
+
 		Map<ExpressionNode,ArrayList<ExpressionNode>> expressionsMap = new HashMap<>();
 		Map<ExpressionNode, ExpressionNode> expressionsToRebuild = new HashMap<>();
 
@@ -376,14 +376,14 @@ public class AlgebraSimplifier {
 					List<Expression> exChildren = ex.value.visit(visitor);
 					boolean exIsBinary = exChildren != null;
 
-					if (expIsBinary && (compareExpressions(ex.value, expChildren.get(0), model) || compareExpressions(ex.value, expChildren.get(1), model))) {
+					if (expIsBinary && (ex.value.equals(expChildren.get(0)) || ex.value.equals(expChildren.get(1)))) {
 						Expression newExp = ex.value;
 						expressionsToChange.put(ex, null);
 						expressionsToChange.put(exp, new ExpressionNode(exp.key, newExp, model));
 						break;
 					}
 
-					if (exIsBinary && (compareExpressions(exp.value, exChildren.get(0), model) || compareExpressions(exp.value, exChildren.get(1), model))) {
+					if (exIsBinary && (exp.value.equals(exChildren.get(0)) || exp.value.equals(exChildren.get(1)))) {
 						Expression newExp = exp.value;
 						expressionsToChange.put(ex, null);
 						expressionsToChange.put(exp, new ExpressionNode(exp.key, newExp, model));
@@ -722,14 +722,13 @@ public class AlgebraSimplifier {
 				return Expressions.constant(value);
 			}
 		});
-		
+
 		if (!simplified) return null;
 
 
 		return new SimplificationStep(rebuildExpression(expr, model, expressionsToRebuild), expr, lawToApply);
 
 	}
-
 
 	private static Expression rebuildExpression(Expression expr, AnalyzerModel model, Map<ExpressionNode,ExpressionNode> expressionsToChange) {
 
@@ -789,7 +788,6 @@ public class AlgebraSimplifier {
 
 		});
 	}
-
 
 	public static List<SimplificationStep> possibleSimplifications(Expression expr, AnalyzerModel model) {
 		ArrayList<SimplificationStep> simplifications = new ArrayList<>();

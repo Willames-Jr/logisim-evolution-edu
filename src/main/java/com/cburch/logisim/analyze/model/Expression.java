@@ -14,7 +14,6 @@ import static com.cburch.logisim.analyze.Strings.S;
 import com.cburch.logisim.analyze.data.Range;
 import com.cburch.logisim.analyze.model.Var.Bit;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 

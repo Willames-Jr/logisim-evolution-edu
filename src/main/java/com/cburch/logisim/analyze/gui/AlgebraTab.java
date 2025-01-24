@@ -79,7 +79,6 @@ class AlgebraTab extends AnalyzerTab {
 			final var notation = Notation.values()[notationChoice.getSelectedIndex()];
 			if (e.getSource() == simplificationBtn) {
 				//Bloco de testes
-
 				Expression actualExpression = null;
 				try {
 					actualExpression = Parser.parse(getField().getText(), model);
@@ -87,7 +86,7 @@ class AlgebraTab extends AnalyzerTab {
 					e1.printStackTrace();
 				}
 
-				List<AlgebraSimplifier.SimplificationStep> steps = AlgebraSimplifier.possibleSimplifications(actualExpression, model);
+				List<AlgebraSimplifier.SimplificationStep> steps = AlgebraSimplifier.possibleSimplifications(actualExpression,model);
 				showSimplifications(steps);
 
 			}
@@ -117,6 +116,10 @@ class AlgebraTab extends AnalyzerTab {
 								+ "<body></html>");
 
 						getField().setEnabled(false);
+						possibleSimplificationsPanel.setVisible(false);
+						getSimplificationPanel().setVisible(false);
+						getSimplificationPanel().setPreferredSize(new Dimension(0,0));
+						getSimplificationPanel().setMaximumSize(new Dimension(0,0));
 						insertTextField();
 
 
@@ -144,6 +147,10 @@ class AlgebraTab extends AnalyzerTab {
 			
 			if (fieldCount == 0) {
 				getField().setEnabled(false);
+				possibleSimplificationsPanel.setVisible(false);
+				getSimplificationPanel().setVisible(false);
+				getSimplificationPanel().setPreferredSize(new Dimension(0,0));
+				getSimplificationPanel().setMaximumSize(new Dimension(0,0));
 				insertTextField();
 				return;
 			}
@@ -180,7 +187,7 @@ class AlgebraTab extends AnalyzerTab {
 			}
 			
 			if (!copyModel.getTruthTable().equals(auxModel.getTruthTable())) {
-				getLabel().setText("Incorreto");
+				getLabel().setText("A expressão não é equivalente.");
 				removeAllTables();
 				addTruthTable(copyModel.getTruthTable(), "Expressão original:");
 				addTruthTable(auxModel.getTruthTable(), "Sua expressão:");
@@ -194,16 +201,19 @@ class AlgebraTab extends AnalyzerTab {
 				String message;
 				
 				if (newExpr.toString(notation).length() == minimalString.length()) {
-					message = "Simplificação mínima";
+					message = "Expressão vaĺida e mínima";
 				} else {
 					message = "Simplificação válida, mas não é a mínima";
 				}
+
 				getField().setEnabled(false);
 				possibleSimplificationsPanel.setVisible(false);
 				getLabel().setText(message);
+				getSimplificationPanel().setVisible(false);
+				getSimplificationPanel().setPreferredSize(new Dimension(0,0));
+				getSimplificationPanel().setMaximumSize(new Dimension(0,0));
 				insertTextField();					
 				removeAllTables();
-
             }
         }
 
@@ -258,28 +268,41 @@ class AlgebraTab extends AnalyzerTab {
 		listModel = new DefaultListModel<>();
 
 		model.getOutputExpressions().addOutputExpressionsListener(myListener);
+
 		enter.setToolTipText("Confirmar escolha");
 		enter.addActionListener(myListener);
 
-		simplificationBtn.addActionListener(myListener);
 		simplificationBtn.setToolTipText("Mostrar possíveis simplificações");
 		simplificationBtn.setText("Ajuda");
+		simplificationBtn.addActionListener(myListener);
 
 		selector = new OutputSelector(model);
 		selector.addItemListener(myListener);
+
+		simplificationsList = new JList<>(listModel);
+
+		simplificationsList.addListSelectionListener(e -> {
+			String selectedExpression = simplificationsList.getSelectedValue().split(":")[1].trim();
+
+			getField().setText(selectedExpression);
+
+			//JOptionPane.showMessageDialog(null, "Expression: " + simplificationsList.getSelectedValue());
+		});
 
 		gbt = new GridBagLayout();
 		gbc = new GridBagConstraints();
 		gbc.weightx = 1.0;
 		gbc.weighty = 1.0;
 		gbc.fill = GridBagConstraints.BOTH;
+
 		tables = new JPanel();
-		tables.setPreferredSize(new Dimension(200, 400));
+		tables.setPreferredSize(new Dimension(200, 800));
 		tables.setBorder(BorderFactory.createEmptyBorder());
 		tables.setLayout(gbt);
 
 		final var gb = new GridBagLayout();
 		final var gc = new GridBagConstraints();
+
 		setLayout(gb);
 		setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
@@ -297,30 +320,24 @@ class AlgebraTab extends AnalyzerTab {
 		add(infoLabel);
 
 		gc.weighty = 0.0;
-		gc.fill = GridBagConstraints.HORIZONTAL;
-
-		simplificationsList = new JList<>(listModel);
-
-		simplificationsList.addListSelectionListener(e -> {
-			String selectedExpression = simplificationsList.getSelectedValue().split(":")[1].trim();
-
-			getField().setText(selectedExpression);
-
-			//JOptionPane.showMessageDialog(null, "Expression: " + simplificationsList.getSelectedValue());
-		});
 
 		possibleSimplificationsPanel = new JPanel();
-		possibleSimplificationsPanel.setLayout(new BoxLayout(possibleSimplificationsPanel, BoxLayout.Y_AXIS));
+		possibleSimplificationsPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
-		possibleSimplificationsPanel.add(new JLabel("Possíveis simplificações: "));
+		JLabel possibleSimplificationsLabel = new JLabel("Possíveis simplificações: ");
+		possibleSimplificationsLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		possibleSimplificationsPanel.add(possibleSimplificationsLabel);
 
 		possibleSimplificationsPanel.add(simplificationsList);
 		possibleSimplificationsPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+
 		possibleSimplificationsPanel.setVisible(false);
 		//possibleSimplificationsPanel.setBorder(BorderFactory.createEmptyBorder());
 
 		fieldsPanel = new JPanel();
 		fieldsPanel.setLayout(new BoxLayout(fieldsPanel, BoxLayout.Y_AXIS));
+		fieldsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		fieldsPanel.setAlignmentY(Component.TOP_ALIGNMENT);
 
 		gb.setConstraints(fieldsPanel, gc);
 
@@ -335,6 +352,7 @@ class AlgebraTab extends AnalyzerTab {
 		mainPanel.add(inputScrollPane);
 
 		mainPanel.add(tables);
+
 		gb.setConstraints(mainPanel, gc);
 		add(mainPanel);
 
@@ -353,14 +371,14 @@ class AlgebraTab extends AnalyzerTab {
 		//add(tables);
 		addTruthTable(model.getTruthTable(),"Expressão original");
 
-		buttons = new JPanel();
-		buttons.add(enter);
-		gb.setConstraints(buttons, gc);
-		add(buttons);
+		//buttons = new JPanel();
+		//buttons.add(enter);
+		//gb.setConstraints(buttons, gc);
+		//add(buttons);
 
-		myListener.insertUpdate(null);
+		//myListener.insertUpdate(null);
 		setError(null);
-		insertTextField();
+		//insertTextField();
 
 	}
 
@@ -370,6 +388,10 @@ class AlgebraTab extends AnalyzerTab {
 
 	JLabel getLabel() {
 		return (JLabel) ( (JPanel) textFields.get(fieldCount).getComponent(0)).getComponent(1);
+	}
+
+	JPanel getSimplificationPanel() {
+		return (JPanel) textFields.get(fieldCount).getComponent(1);
 	}
 
 	JLabel getError() {
@@ -385,6 +407,7 @@ class AlgebraTab extends AnalyzerTab {
 	private void showSimplifications(List<AlgebraSimplifier.SimplificationStep> possibleSimplifications) {
 		if (!possibleSimplifications.isEmpty()) possibleSimplificationsPanel.setVisible(true);
 
+		listModel.clear();
 		possibleSimplifications.forEach(simplificationStep -> {
 			listModel.addElement(simplificationStep.law().toString() + ": " + simplificationStep.newExpression().toString(notation) );
 		});
@@ -399,13 +422,15 @@ class AlgebraTab extends AnalyzerTab {
 
 	private void insertTextField() {
 
-
 		GridBagConstraints gbc = new GridBagConstraints();
-		JPanel combinedPanel = new JPanel(new GridBagLayout());
+		JPanel combinedPanel = new JPanel();
 
-		JTextField newField = new JTextField(20);
+		combinedPanel.setLayout(new BoxLayout(combinedPanel, BoxLayout.Y_AXIS));
+		combinedPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		combinedPanel.setAlignmentY(Component.TOP_ALIGNMENT);
+
+		JTextField newField = new JTextField(15);
 		JLabel newLabel = new JLabel("");
-
 
 		JPanel newPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		newPanel.add(newField);
@@ -413,26 +438,34 @@ class AlgebraTab extends AnalyzerTab {
 		newPanel.add(simplificationBtn);
 		newPanel.add(enter);
 
-		gbc.insets = new Insets(0, 0, 0, 0);
+		/*gbc.insets = new Insets(0, 0, 0, 0);
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		gbc.weightx = 1.0; // No extra horizontal space
 		gbc.weighty = 0.0; // No extra vertical space
 		gbc.fill = GridBagConstraints.BOTH; // Don't fill any extra space
-		gbc.anchor = GridBagConstraints.NORTH;
-		newPanel.setPreferredSize(new Dimension(100,50));
-		combinedPanel.add(newPanel, gbc);
+		gbc.anchor = GridBagConstraints.NORTH;*/
+
+		newPanel.setPreferredSize(new Dimension(0, 50));
+		newPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+		combinedPanel.add(newPanel);
 
 		JScrollPane scrollPane = new JScrollPane(possibleSimplificationsPanel);
+		scrollPane.setPreferredSize(new Dimension(900,110));
+		scrollPane.setMaximumSize(new Dimension(900,110));
 		scrollPane.setBorder(BorderFactory.createEmptyBorder());
 		JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
 		bottomPanel.setBorder(BorderFactory.createEmptyBorder());
+
+		bottomPanel.setPreferredSize(new Dimension(0, 120));
+		bottomPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 120));
 		bottomPanel.add(scrollPane);
 
-		gbc.gridy = 1;
-		gbc.weightx= 0.0;
-		combinedPanel.add(bottomPanel, gbc);
+		/*gbc.gridy = 1;
+		gbc.weightx= 0.0;*/
+		combinedPanel.add(bottomPanel);
+		//combinedPanel.add(bottomPanel, gbc);
 
 
 		textFields.add(combinedPanel);

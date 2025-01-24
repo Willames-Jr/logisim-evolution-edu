@@ -136,17 +136,17 @@ extra.apply {
 
   // Platform-agnostic jpackage parameters shared across all the builds.
   var params = listOf(
-      jpackage,
-      // NOTE: we cannot use --app-version as part of platform agnostic set as i.e. both macOS and
-      // Windows packages do not allow use of any suffixes like "-dev" etc, so --app-version is set
-      // in these builders separately.
-      "--input", libsDir,
-      "--main-class", "com.cburch.logisim.Main",
-      "--main-jar", shadowJarFilename,
-      "--copyright", copyrights,
-      "--dest", targetDir,
-      "--description", "Digital logic design tool and simulator",
-      "--vendor", "${project.name} developers",
+    jpackage,
+    // NOTE: we cannot use --app-version as part of platform agnostic set as i.e. both macOS and
+    // Windows packages do not allow use of any suffixes like "-dev" etc, so --app-version is set
+    // in these builders separately.
+    "--input", libsDir,
+    "--main-class", "com.cburch.logisim.Main",
+    "--main-jar", shadowJarFilename,
+    "--copyright", copyrights,
+    "--dest", targetDir,
+    "--description", "Digital logic design tool and simulator",
+    "--vendor", "${project.name} developers",
   )
   if (logger.isDebugEnabled()) {
     params += listOf("--verbose")
@@ -155,12 +155,12 @@ extra.apply {
 
   // Linux (DEB/RPM) specific settings for jpackage.
   val linuxParams = params + listOf(
-      "--name", project.name,
-      "--app-version", appVersion,
-      "--file-associations", "${supportDir}/linux/file.jpackage",
-      "--icon", "${supportDir}/linux/logisim-icon-128.png",
-      "--install-dir", "/opt",
-      "--linux-shortcut"
+    "--name", project.name,
+    "--app-version", appVersion,
+    "--file-associations", "${supportDir}/linux/file.jpackage",
+    "--icon", "${supportDir}/linux/logisim-icon-128.png",
+    "--install-dir", "/opt",
+    "--linux-shortcut"
   )
   set(LINUX_PARAMS, linuxParams)
 
@@ -175,13 +175,17 @@ java {
     srcDir("${buildDir}/generated/logisim/java")
     srcDir("${buildDir}/generated/sources/srcgen")
   }
+  sourceSets["test"].java {
+    srcDir("src/test/java")
+    srcDir("src/test/resources")
+  }
 }
 
-task<Jar>("sourcesJar") {
+tasks.register<Jar>("sourcesJar") {
   group = "build"
   description = "Creates a JAR archive with project sources."
   dependsOn.add("classes")
-  classifier = "src"
+  archiveClassifier.set("src")
 
   from(sourceSets.main.get().allSource)
   archiveVersion.set(ext.get(APP_VERSION) as String)
@@ -360,18 +364,18 @@ tasks.register("createMsi") {
 
   doLast {
     val params = ext.get(SHARED_PARAMS) as List<String> + listOf(
-        "--name", project.name,
-        "--file-associations", "${supportDir}/windows/file.jpackage",
-        "--icon", "${supportDir}/windows/Logisim-evolution.ico",
-        "--win-menu-group", project.name as String,
-        "--win-shortcut",
-        "--win-dir-chooser",
-        "--win-menu",
-        "--type", "msi",
-        // we MUST use short version form (without any suffix like "-dev", as it is not allowed in MSI package:
-        // https://docs.microsoft.com/en-us/windows/win32/msi/productversion?redirectedfrom=MSDN
-        // NOTE: any change to version **format** may require editing of .github/workflows/nightly.yml too!
-        "--app-version", ext.get(APP_VERSION_SHORT) as String,
+      "--name", project.name,
+      "--file-associations", "${supportDir}/windows/file.jpackage",
+      "--icon", "${supportDir}/windows/Logisim-evolution.ico",
+      "--win-menu-group", project.name as String,
+      "--win-shortcut",
+      "--win-dir-chooser",
+      "--win-menu",
+      "--type", "msi",
+      // we MUST use short version form (without any suffix like "-dev", as it is not allowed in MSI package:
+      // https://docs.microsoft.com/en-us/windows/win32/msi/productversion?redirectedfrom=MSDN
+      // NOTE: any change to version **format** may require editing of .github/workflows/nightly.yml too!
+      "--app-version", ext.get(APP_VERSION_SHORT) as String,
     )
     runCommand(params, "Error while creating the MSI package.")
   }
@@ -404,35 +408,35 @@ tasks.register("createApp") {
 
     var params = ext.get(SHARED_PARAMS) as List<String>
     params += listOf(
-        "--name", ext.get(UPPERCASE_PROJECT_NAME) as String,
-        "--file-associations", "${supportDir}/macos/file.jpackage",
-        "--icon", "${supportDir}/macos/Logisim-evolution.icns",
-        // app versioning is strictly checked for macOS. No suffix allowed for `app-image` type.
-        "--app-version", ext.get(APP_VERSION_SHORT) as String,
-        "--type", "app-image",
+      "--name", ext.get(UPPERCASE_PROJECT_NAME) as String,
+      "--file-associations", "${supportDir}/macos/file.jpackage",
+      "--icon", "${supportDir}/macos/Logisim-evolution.icns",
+      // app versioning is strictly checked for macOS. No suffix allowed for `app-image` type.
+      "--app-version", ext.get(APP_VERSION_SHORT) as String,
+      "--type", "app-image",
     )
     runCommand(params, "Error while creating the .app directory.")
 
     val targetDir = ext.get(TARGET_DIR) as String
     val pListFilename = "${appDirName}/Contents/Info.plist"
     runCommand(listOf(
-        "awk",
-        "/Unknown/{sub(/Unknown/,\"public.app-category.education\")};"
-            + "/utilities/{sub(/public.app-category.utilities/,\"public.app-category.education\")};"
-            + "{print >\"${targetDir}/Info.plist\"};"
-            + "/NSHighResolutionCapable/{"
-            + "print \"  <string>true</string>\" >\"${targetDir}/Info.plist\";"
-            + "print \"  <key>NSSupportsAutomaticGraphicsSwitching</key>\" >\"${targetDir}/Info.plist\""
-            + "}",
-        pListFilename,
+      "awk",
+      "/Unknown/{sub(/Unknown/,\"public.app-category.education\")};"
+              + "/utilities/{sub(/public.app-category.utilities/,\"public.app-category.education\")};"
+              + "{print >\"${targetDir}/Info.plist\"};"
+              + "/NSHighResolutionCapable/{"
+              + "print \"  <string>true</string>\" >\"${targetDir}/Info.plist\";"
+              + "print \"  <key>NSSupportsAutomaticGraphicsSwitching</key>\" >\"${targetDir}/Info.plist\""
+              + "}",
+      pListFilename,
     ), "Error while patching Info.plist file.")
 
     runCommand(listOf(
-        "mv", "${targetDir}/Info.plist", pListFilename
+      "mv", "${targetDir}/Info.plist", pListFilename
     ), "Error while moving Info.plist into the .app directory.")
 
     runCommand(listOf(
-        "codesign", "--force", "--sign", "-", appDirName
+      "codesign", "--force", "--sign", "-", appDirName
     ), "Error while executing: codesign")
   }
 }
@@ -460,14 +464,14 @@ tasks.register("createDmg") {
 
   doLast {
     val params = listOf(
-        ext.get(JPACKAGE) as String,
-        "--app-image", appDirName,
-        "--name", project.name,
-        // We can pass full version here, even if contains suffix part too.
-        "--app-version", ext.get(APP_VERSION) as String,
-        "--dest", ext.get(TARGET_DIR) as String,
-        "--type", "dmg",
-      )
+      ext.get(JPACKAGE) as String,
+      "--app-image", appDirName,
+      "--name", project.name,
+      // We can pass full version here, even if contains suffix part too.
+      "--app-version", ext.get(APP_VERSION) as String,
+      "--dest", ext.get(TARGET_DIR) as String,
+      "--type", "dmg",
+    )
     runCommand(params, "Error while creating the DMG package")
   }
 }
@@ -571,7 +575,7 @@ tasks.register("genBuildInfo") {
  * Task genVhdlSyntax
  *
  * Generates the VhdlSyntax.java file
-*/
+ */
 tasks.register("genVhdlSyntax") {
   val sourceFile = "${projectDir}/src/main/jflex/com/cburch/logisim/vhdl/syntax/VhdlSyntax.jflex"
   val skeletonFile = "${projectDir}/support/jflex/skeleton.default"
@@ -604,10 +608,10 @@ tasks.register("genVhdlSyntax") {
     javaexec {
       classpath = files(jflexJarFileName)
       args = listOf(
-          "--nobak",
-          "-d", targetDir,
-          "--skel", skeletonFile,
-          sourceFile
+        "--nobak",
+        "-d", targetDir,
+        "--skel", skeletonFile,
+        sourceFile
       )
     }
   }
@@ -617,7 +621,7 @@ tasks.register("genVhdlSyntax") {
  * Task: genFiles
  *
  * Umbrella task to generate all generated files
-*/
+ */
 tasks.register("genFiles") {
   group = "build"
   description = "Generates all generated files."
@@ -674,16 +678,16 @@ tasks {
 
   test {
     useJUnitPlatform()
-//    testLogging {
-//      events("passed", "skipped", "failed")
-//    }
+    testLogging {
+      events("passed", "skipped", "failed")
+    }
   }
 
   jar {
     manifest {
       attributes.putAll(mapOf(
-          "Implementation-Title" to name,
-          "Implementation-Version" to archiveVersion
+        "Implementation-Title" to name,
+        "Implementation-Version" to archiveVersion
       ))
     }
 
