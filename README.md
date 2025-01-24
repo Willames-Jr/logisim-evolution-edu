@@ -2,14 +2,21 @@
 
 ---
 
-# Logisim-evolution #
+# Logisim-evolution-edu #
+
+This fork of `Logisim-evolution` aims to enhance the educational features of the software. The primary objective is to provide additional tools and functionalities to assist in the simplification of Boolean algebra expressions. Key changes include:
+
+- New GUI for Boolean expression simplification.
+- Algorithms for help in Boolean expression simplification.
+
+These changes are designed to make `Logisim-evolution` more useful for educational settings, particularly in teaching and learning digital logic design and Boolean algebra.
+
+---
 
 * **Table of contents**
   * [Features](#features)
   * [Requirements](#requirements)
-  * **[Downloads](#download)**
-    * [Package Manager](#package-manager)
-    * [Nightly builds (unstable)](#nightly-builds)
+  * [Downloads](#download)
   * [Pictures of Logisim-evolution](docs/pics.md)
   * [More Information](docs/docs.md)
   * [Bug reports & feature requests](https://github.com/logisim-evolution/logisim-evolution/issues)
@@ -50,21 +57,10 @@ It requires [Java 16 (or newer)](https://www.oracle.com/java/technologies/javase
 
 ## Download ###
 
-`Logisim-evolution` is available for
-[download in compiled form](https://github.com/logisim-evolution/logisim-evolution/releases)
-with ready to use installable packages for Windows, macOS, and Linux
-or in [source code form](https://github.com/logisim-evolution), which you can [build yourself](docs/developers.md).
+Clone the repo and run the `logisim.jar` file in the `Compiled` folder.
 
-The following [platform specific packages](https://github.com/logisim-evolution/logisim-evolution/releases)
-include the Java runtime and do not require it to be installed separately:
-
-* `logisim-evolution_<version>-1_amd64.deb`: Debian package (also suitable for Ubuntu and derivatives),
-* `logisim-evolution-<version>-1.x86_64.rpm`: Package for Fedora/Redhat/CentOS/SuSE Linux distributions,
-* `logisim-evolution-<version>.msi`: Installer package for Microsoft Windows,
-* `logisim-evolution-<version>.dmg`: macOS package.
-
-The Java JAR [`logisim-evolution-<version>-all.jar`](https://github.com/logisim-evolution/logisim-evolution/releases)
-is also available and can be run on any system with a supported Java runtime installed.
+To run the file in the command line just run:
+`java -jar logisim.jar`
 
 ---
 
@@ -83,27 +79,6 @@ See [Safely open apps on your Mac](https://support.apple.com/en-us/HT202491) for
 
 Depending on your security settings, you may also get a panel asking if you wish to allow it to accept
 network connections. You can click "Deny" as we do not need network access currently nor we do request any.
-
-### Package Manager ###
-
-`Logisim-evolution` is available from a bunch of package managers.  
-Note that these are not maintained by the core developers.  
-If you should observe a bug in Logisim-evolution while using one of these packages,
-first make sure that it can be reproduced with the most recent official packages
-[provided through this repository](https://github.com/logisim-evolution/logisim-evolution/releases)
-and ideally the HEAD of our [develop branch](https://github.com/logisim-evolution/logisim-evolution/tree/develop)
-before [creating an issue](https://github.com/logisim-evolution/logisim-evolution/issues) on
-the official [Logisim-evolution repository](https://github.com/logisim-evolution/logisim-evolution).  
-Otherwise, report the issue to the package maintainer!
-
-* [Snap](https://snapcraft.io/logisim-evolution) (`snap install logisim-evolution`)
-* [Flathub](https://flathub.org/apps/details/com.github.reds.LogisimEvolution) (`flatpak install flathub com.github.reds.LogisimEvolution`)
-* [Homebrew](https://formulae.brew.sh/cask/logisim-evolution) (`brew install --cask logisim-evolution`)
-* [MacPorts](https://ports.macports.org/port/logisim-evolution/details/) (`port install logisim-evolution`)
-* [Chocolatey](https://community.chocolatey.org/packages/logisim-evolution) (`choco install logisim-evolution`)
-* [winget](https://wingetgui.com/apps?id=Logisim-evolution.Logisim-evolution)
-(`winget install --id=Logisim-evolution.Logisim-evolution  -e`)
-* [Arch User Repository](https://aur.archlinux.org/packages/logisim-evolution)
 
 ### Nightly builds ###
 
